@@ -2,7 +2,7 @@ const util = require("util");
 const multer = require("multer");
 const maxSize = 2 * 1024 * 1024; 
 const fs = require('fs');
-const path = require('path'); 
+const path = require('path');  
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
       console.log(`${__dirname}`);
       // const filePath = path.join("/", file.originalname);
       // fs.writeFileSync(filePath, file.originalname);
-      cb(null,  "/Users/fuhetienne/Documents/node/uploads");
+      cb(null,  "/Users/fuhetienne/Documents/test/node/uploads");
     } catch (e) {
       cb(e);
     }
