@@ -10,7 +10,7 @@ const storage = multer.diskStorage({
       console.log(`${__dirname}`);
       // const filePath = path.join("/", file.originalname);
       // fs.writeFileSync(filePath, file.originalname);
-      cb(null,  "/Users/fuhetienne/Documents/node-js-jwt-auth/uploads");
+      cb(null,  "/Users/fuhetienne/Documents/node/uploads");
     } catch (e) {
       cb(e);
     }
