@@ -38,7 +38,7 @@ jobs:
         with:
           host: $PROXMOX_SERVER_IP # Proxmox server IP
           username: $PROXMOX_SSH_USER # SSH user for Proxmox
-          key: ${{ secrets.PROXMOX_SSH_Public_KEY }} # SSH private key
+          key: ${{ secrets.PROXMOX_SSH_PUBLIC_KEY }} # SSH private key
           port: 22
           script: |
             # Pull the latest Docker image from GitHub if needed
