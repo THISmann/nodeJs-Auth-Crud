@@ -12,11 +12,11 @@ jobs:
     steps:
       # Checkout the repository
       - name: Checkout Repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       # Set up Node.js environment
       - name: Set up Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: '16'
 
@@ -36,17 +36,41 @@ jobs:
       - name: Deploy to Proxmox server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: $PROXMOX_SERVER_IP # Proxmox server IP
-          username: $PROXMOX_SSH_USER # SSH user for Proxmox
-          key: ${{ secrets.PROXMOX_SSH_PUBLIC_KEY }} # SSH private key
+          host: ${{ PROXMOX_SERVER_IP }}  # Use GitHub Secret for the IP
+          username: ${{ PROXMOX_SSH_USER }}  # Use GitHub Secret for SSH user
+          key: ${{ secrets.PROXMOX_SSH_PRIVATE_KEY }}  # Use private key for SSH
           port: 22
           script: |
-            # Pull the latest Docker image from GitHub if needed
-            cd /home/etienne/
+            set -e  # Stop execution on any error
+
+            # Navigate to the deployment directory
+            cd /home/etienne || exit 1
+
+            # Check if repository exists, if not, clone it
+            if [ ! -d "nodeJs-Auth-Crud" ]; then
+              git clone https://github.com/THISmann/nodeJs-Auth-Crud.git
+            fi
+
+            # Enter project folder
+            cd nodeJs-Auth-Crud || exit 1
+
+            # Pull latest changes
+            git checkout main
             git pull origin main
 
-            # Build the Docker containers (if needed)
-            docker-compose build
+            # Ensure Docker is running
+            if ! systemctl is-active --quiet docker; then
+              sudo systemctl start docker
+            fi
 
-            # Restart the app using Docker Compose
+            # Ensure Docker Compose is installed
+            if ! command -v docker-compose &> /dev/null; then
+              sudo apt update && sudo apt install -y docker-compose
+            fi
+
+            # Build and restart the app using Docker Compose
+            docker-compose down
+            docker-compose build
             docker-compose up -d
+
+            echo "Deployment successful!"
