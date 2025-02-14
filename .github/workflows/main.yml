@@ -14,6 +14,10 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Debug: List repository files
+      - name: List repository files
+        run: ls -la
+
       # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -36,7 +40,7 @@ jobs:
       - name: Deploy to Proxmox server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: $PROXMOX_SERVER_IP  # Use GitHub Secret for the IP]
+          host: $PROXMOX_SERVER_IP  # Use GitHub Secret for the IP
           username: $PROXMOX_SSH_USER  # Use GitHub Secret for SSH user
           key: ${{ secrets.PROXMOX_SSH_PRIVATE_KEY }}  # Use private key for SSH
           port: 22
