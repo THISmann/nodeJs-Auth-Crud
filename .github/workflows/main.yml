@@ -3,70 +3,58 @@ name: Deploy Node.js app to Proxmox
 on:
   push:
     branches:
-      - main  # Trigger deployment on push to the main branch
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Debug: List repository files
-      - name: List repository files
-        run: ls -la
-
-      # Set up Node.js environment
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '16'
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # SSH into Proxmox and deploy the app
       - name: Deploy to Proxmox server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: $PROXMOX_SERVER_IP  # Use GitHub Secret for the IP
-          username: $PROXMOX_SSH_USER  # Use GitHub Secret for SSH user
-          key: ${{ secrets.PROXMOX_SSH_PRIVATE_KEY }}  # Use private key for SSH
+          host: "10.90.122.235"
+          username: "etienne"
+          key: ${{ secrets.PROXMOX_SSH_PUBLIC_KEY }}
           port: 22
           script: |
-            set -e  # Stop execution on any error
+            set -e
 
-            # Navigate to the deployment directory
+            echo "🔹 Vérification du répertoire de déploiement..."
             cd /home/etienne || exit 1
 
-            # Check if repository exists, if not, clone it
             if [ ! -d "nodeJs-Auth-Crud" ]; then
               git clone https://github.com/THISmann/nodeJs-Auth-Crud.git
             fi
 
-            # Enter project folder
             cd nodeJs-Auth-Crud || exit 1
-
-            # Pull latest changes
             git checkout main
             git pull origin main
 
-            # Ensure Docker is running
+            echo "🔹 Vérification de Docker..."
             if ! systemctl is-active --quiet docker; then
               sudo systemctl start docker
             fi
 
-            # Ensure Docker Compose is installed
+            echo "🔹 Vérification de Docker Compose..."
             if ! command -v docker-compose &> /dev/null; then
               sudo apt update && sudo apt install -y docker-compose
             fi
 
-            # Build and restart the app using Docker Compose
+            echo "🔹 Lancement de l'application..."
             docker-compose down
             docker-compose build
             docker-compose up -d
 
-            echo "Deployment successful!"
+            echo "✅ Déploiement réussi !"
