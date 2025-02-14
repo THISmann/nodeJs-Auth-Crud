@@ -1,12 +1,9 @@
-/**
- * database configuration
- */
 module.exports = {
-  HOST: "localhost",
+  HOST: "db",  // This must be the service name in Docker Compose
   USER: "postgres",
   PASSWORD: "password",
   DB: "test",
-  PORT: 5433,
+  PORT: 5432,  // Use internal PostgreSQL port (5432 inside the container)
   dialect: "postgres",
   pool: {
     max: 5,
