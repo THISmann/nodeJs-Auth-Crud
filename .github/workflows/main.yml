@@ -1,80 +1,38 @@
-name: Deploy Node.js app to Proxmox
+name: Deploy Node.js to Proxmox
 
 on:
   push:
     branches:
-      - main  # Trigger deployment on push to the main branch
+      - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      # Debug: List repository files
-      - name: List repository files
-        run: ls -la
+    - name: Debug - List files in workspace
+      run: ls -la
 
-      # Set up Node.js environment
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '16'
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
 
-      # Install dependencies
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
 
-      # Build the application (if applicable)
-      - name: Build the app
-        run: npm run build
+    - name: Build project
+      run: npm run build
 
-      # Run tests (optional)
-      - name: Run tests
-        run: npm test
-
-      # SSH into Proxmox and deploy the app
-      - name: Deploy to Proxmox server
-        uses: appleboy/ssh-action@v0.1.7
-        with:
-          host: $PROXMOX_SERVER_IP  # Use GitHub Secret for the IP
-          username: $PROXMOX_SSH_USER  # Use GitHub Secret for SSH user
-          key: ${{ secrets.PROXMOX_SSH_PRIVATE_KEY }}  # Use private key for SSH
-          port: 22
-          script: |
-            set -e  # Stop execution on any error
-
-            # Navigate to the deployment directory
-            cd /home/etienne || exit 1
-
-            # Check if repository exists, if not, clone it
-            if [ ! -d "nodeJs-Auth-Crud" ]; then
-              git clone https://github.com/THISmann/nodeJs-Auth-Crud.git
-            fi
-
-            # Enter project folder
-            cd nodeJs-Auth-Crud || exit 1
-
-            # Pull latest changes
-            git checkout main
-            git pull origin main
-
-            # Ensure Docker is running
-            if ! systemctl is-active --quiet docker; then
-              sudo systemctl start docker
-            fi
-
-            # Ensure Docker Compose is installed
-            if ! command -v docker-compose &> /dev/null; then
-              sudo apt update && sudo apt install -y docker-compose
-            fi
-
-            # Build and restart the app using Docker Compose
-            docker-compose down
-            docker-compose build
-            docker-compose up -d
-
-            echo "Deployment successful!"
+    - name: Deploy to Proxmox
+      run: |
+        ssh -o StrictHostKeyChecking=no user@10.90.122.235 "
+          mkdir -p /path/to/deploy &&
+          rm -rf /path/to/deploy/* &&
+          tar -czf - . | ssh user@10.90.122.235 'tar -xzf - -C /path/to/deploy'
+        "
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
