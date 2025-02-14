@@ -28,16 +28,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # Build the application (if applicable)
-      - name: Build the app
-        run: npm run build
- 
       # SSH into Proxmox and deploy the app
       - name: Deploy to Proxmox server
         uses: appleboy/ssh-action@v0.1.7
         with:
-          host: $PROXMOX_SERVER_IP  # Use GitHub Secret for the IP
-          username: $PROXMOX_SSH_USER  # Use GitHub Secret for SSH user
+          host: ${{ secrets.PROXMOX_SERVER_IP }}  # Use GitHub Secret for the IP
+          username: ${{ secrets.PROXMOX_SSH_USER }}  # Use GitHub Secret for SSH user
           key: ${{ secrets.PROXMOX_SSH_PRIVATE_KEY }}  # Use private key for SSH
           port: 22
           script: |
