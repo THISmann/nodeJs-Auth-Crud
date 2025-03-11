@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git 'https://github.com/THISmann/nodeJs-Auth-Crud.git'
+                git credentialsId: 'github-credentials', url: 'https://github.com/THISmann/nodeJs-Auth-Crud.git', branch: 'main'
             }
         }
 
