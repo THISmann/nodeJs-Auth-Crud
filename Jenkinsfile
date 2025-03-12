@@ -90,5 +90,16 @@ pipeline {
                 checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/THISmann/nodeJs-Auth-Crud']])
             }
         }
+
+        stage('SCM') {
+            checkout scm
+        }
+        stage('SonarQube Analysis') {
+            def scannerHome = tool 'SonarScanner';
+            withSonarQubeEnv() {
+            sh "${scannerHome}/bin/sonar-scanner"
+            }
+        }
+
     }
 }
