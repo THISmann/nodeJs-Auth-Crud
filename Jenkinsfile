@@ -87,7 +87,7 @@ pipeline {
     stages {
         stage('Hello') {
             steps {
-                checkout scmGit(branches: [[name: '*/master']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/THISmann/nodeJs-Auth-Crud']])
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/THISmann/nodeJs-Auth-Crud']])
             }
         }
     }
