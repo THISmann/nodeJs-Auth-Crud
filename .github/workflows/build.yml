@@ -44,9 +44,10 @@ jobs:
           projectBaseDir: .
           args: >
             -Dsonar.projectKey=JS_App
-            -Dsonar.eslint.reportPaths=eslint-report.json
-            -Dsonar.coverageReportPaths=coverage/lcov.info
+            -Dsonar.eslint.reportPaths=eslint-report.json     
             -X
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+#  -Dsonar.coverageReportPaths=coverage/lcov.info
