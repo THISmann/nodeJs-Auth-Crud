@@ -15,17 +15,31 @@ jobs:
         with:
           fetch-depth: 0  # Ensures full history for better analysis
 
-      - name: Run SonarQube Scanner
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'  # Specify a Node.js version
+
+      - name: Install ESLint and security plugin
         run: |
-          sonar-scanner \
-            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }} \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} | tee sonar.log
+          npm install --save-dev eslint eslint-plugin-security
+          npx eslint --init  # Initialize ESLint with default config if not present
+        working-directory: .
+
+      - name: Run ESLint SAST Scan
+        run: |
+          npx eslint . --ext .js,.jsx --format json --output-file eslint-report.json
+        working-directory: .
+        continue-on-error: true  # Continue even if ESLint finds issues
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        with:
+          projectBaseDir: .
+          args: >
+            -Dsonar.projectKey=JS_App
+            -Dsonar.eslint.reportPaths=eslint-report.json
+            -X
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-      - name: Upload SonarQube Logs as Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sonar-logs
-          path: sonar.log
