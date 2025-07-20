@@ -32,6 +32,12 @@ jobs:
         working-directory: .
         continue-on-error: true  # Continue even if ESLint finds issues
 
+      - name: Run Jest with Coverage
+        run: |
+          npx jest --coverage --coverageReporters=lcov --coverageDirectory=coverage
+        working-directory: .
+        continue-on-error: true  # Continue even if tests fail
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v5.2.0
         with:
@@ -39,6 +45,7 @@ jobs:
           args: >
             -Dsonar.projectKey=JS_App
             -Dsonar.eslint.reportPaths=eslint-report.json
+            -Dsonar.coverageReportPaths=coverage/lcov.info
             -X
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
