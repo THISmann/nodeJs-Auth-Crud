@@ -43,8 +43,7 @@ jobs:
         with:
           projectBaseDir: .
           args: >
-            -Dsonar.projectKey=JS_App
-            -Dsonar.eslint.reportPaths=eslint-report.json     
+            -Dsonar.projectKey=JS_App    
             -X
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
