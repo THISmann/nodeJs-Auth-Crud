@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 meta
   name: app-config
-  namespace: nodejs-app
+  namespace: nodejs-auth-crud-app
 data:
   DB_HOST: "postgres"
   DB_PORT: "5432"

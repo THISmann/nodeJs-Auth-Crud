@@ -30,7 +30,7 @@
 //                     withSonarQubeEnv('SonarQube') {
 //                         sh '''
 //                         sonar-scanner \
-//                           -Dsonar.projectKey=nodejs-app \
+//                           -Dsonar.projectKey=nodejs-auth-crud-app \
 //                           -Dsonar.sources=. \
 //                           -Dsonar.host.url=$SONARQUBE_URL \
 //                           -Dsonar.login=$SONARQUBE_TOKEN

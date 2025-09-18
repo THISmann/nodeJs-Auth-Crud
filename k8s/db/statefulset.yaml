@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 meta
   name: postgres
-  namespace: nodejs-app
+  namespace: nodejs-auth-crud-app
 spec:
   serviceName: "postgres"
   replicas: 1
