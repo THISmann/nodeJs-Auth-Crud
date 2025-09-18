@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+meta
+  name: nodejs-auth-crud-app
+  namespace: nodejs-auth-crud-app
+spec:
+  selector:
+    app: nodejs-auth-crud-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP

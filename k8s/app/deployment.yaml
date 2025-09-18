@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+meta
+  name: nodejs-auth-crud-app
+  namespace: nodejs-auth-crud-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs-auth-crud-app
+  template:
+    meta
+      labels:
+        app: nodejs-auth-crud-app
+    spec:
+      containers:
+      - name: nodejs-auth-crud-app
+        image: node:18-alpine
+        workingDir: /app
+        command: ["node", "server.js"]
+        ports:
+        - containerPort: 3000
+        envFrom:
+        - configMapRef:
+            name: app-config
+        - secretRef:
+            name: app-secret
+        volumeMounts:
+        - name: app-source
+          mountPath: /app
+      volumes:
+      - name: app-source
+        configMap:
+          name: app-source-code
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-source-code
+  namespace: nodejs-auth-crud-app
+
+  server.js: |
+    const express = require('express');
+    const jwt = require('jsonwebtoken');
+    // ... ton code ici — ou mieux, build une image Docker !
+  package.json: |
+    { "dependencies": { "express": "^4.18.2", "jsonwebtoken": "^9.0.0", "pg": "^8.11.0" } }
